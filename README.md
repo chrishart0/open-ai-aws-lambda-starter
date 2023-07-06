@@ -3,7 +3,13 @@ In this guide we will provide a relatively simple example of how to host a gener
 
 There are two main pieces to this repo, a frontend and a backend. The frontend uses NextJS, the backend uses API API Gateway and Lambda deployed by AWS SAM. The Lambda utilizes the OpenAI API. 
 
-NOTE: This repo is a work in progress. Right now it has only been tested running on the local machine, this hasn't been tested deployed yet.
+NOTE: This repo is a work in progress. Right now it has only been tested running on the local machine, this hasn't been tested deployed yet. 
+
+Features:
+* OpenAI API key stored in AWS Secrets Manager
+* Chat History maintained in UI
+* UI will render markdown for better looking user interface
+* Chat Prompt instructed to return travel itinerary in markdown
 
 ## Overview of the demo application
 The application is an AI Travel agent who will attempt to write a trip itinerary for you. Once the LLM has gotten enough info, it will attempt to write the itinerary in markdown. The UI will render this markdown in the chat window into a nice looking format.
@@ -19,6 +25,7 @@ Here is how it looks:
 1. Ensure you have AWS CLI configured with a profile
 2. Install AWS SAM
 3. Install Docker
+4. Get an OpenAI API key
 
 ### Create Open AI API Key Secret
 Run this bash command modified with your secret
