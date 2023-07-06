@@ -1,9 +1,12 @@
 # AWS Serverless Generative AI Quick Start Guide
-In this guide we will provide the simplest possible example of how to host a generative AI application on AWS using the OpenAI API
+In this guide we will provide a relatively simple example of how to host a generative AI application on AWS using the OpenAI API. I pulled most of this code from my other side project: <MyChefAI.com>, which is an AI recipe writer. 
 
-There are two main pieces to this repo, a frontend and a backend. The frontend uses NextJS, the backend uses API API Gateway and Lambda deployed by AWS SAM. 
+There are two main pieces to this repo, a frontend and a backend. The frontend uses NextJS, the backend uses API API Gateway and Lambda deployed by AWS SAM. The Lambda utilizes the OpenAI API. 
 
 NOTE: This repo is a work in progress. Right now it has only been tested running on the local machine, this hasn't been tested deployed yet.
+
+## Overview of the demo application
+The application is an AI Travel agent who will attempt to write a trip itinerary for you. Once the LLM has gotten enough info, it will attempt to write the itinerary in markdown. The UI will render this markdown in the chat window into a nice looking format.
 
 # Backend - API
 ## Setup Steps
@@ -25,16 +28,17 @@ aws secretsmanager create-secret --name /serverlessGenAiExample/openaiApiKey \
 Invoke AWS SAM API locally with an example event
 
 ```
+cd backend
+
 sam build && sam local invoke ChatFunction --event events/event.json
-
-# NOTE: Use port 4000 because the local UI runs on port 3000
-sam build && sam local start-api --port 4000
-
-curl -X POST localhost:4000/chat \
-   -H "Content-Type: application/json" \
-   -d '{ "message": [ {"role": "system", "content": "You are travel agent with years of experience who specializes in central Europe. You are a posh English person who is slightly pretentious but still friendly. You are speaking with me, a client who has come to you with help for planning out my trip. You should ask me as many questions as you need and help me to build out a trip itinerary and answer any questions I have."}, {"role": "user", "content": "I am going to Vienna."},]}'  | jq
 ```
 
+Startup te API with SAM to mock API Gateway and lambda locally
+
+```
+# NOTE: Use port 4000 because the local UI runs on port 3000
+sam build && sam local start-api --port 4000
+```
 
 # Frontend - UI
 The frontend uses NextJS. 
@@ -45,7 +49,9 @@ The frontend uses NextJS.
 Ensure you have nodejs and npm installed
 
 ## Setup Steps
+Leave your terminal with the backend up and running, open up a new terminal in the root of the repo to run the frontend
 
+Install the needed deps for the frontend to run
 ```
 cd frontend
 npm install
@@ -57,3 +63,12 @@ npm run dev
 ```
 
 You can now open the frontend at <http://localhost:3000>
+
+# Now time to change up the prompt!
+
+The initial prompt is maintained here in the ChatBot component of the frontend: [frontend/components/ChatBox.js](frontend/components/ChatBox.js) in the `initialMessages` variable. Change up the prompt however you wish. Maybe tell it to speak with a different accent, or tell the LLM it is a travel agent for Vienna, Virginia instead of Vienna, Austria.
+
+There is no need to reload or rebuild. Simple make your alteration to the prompt, save the file, and you should see the localhost:3000 page will have refreshed, ready for you to start a new chat.
+
+## Need some help or have an idea for an improvement?
+Please feel free to ask questions or make PRs.
