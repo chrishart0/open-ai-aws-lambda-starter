@@ -1,5 +1,5 @@
 # AWS Serverless Generative AI Quick Start Guide
-In this guide we will provide a relatively simple example of how to host a generative AI application on AWS using the OpenAI API. I pulled most of this code from my other side project: <MyChefAI.com>, which is an AI recipe writer. 
+In this guide we will provide a relatively simple example of how to host a generative AI application on AWS using the OpenAI API. I pulled most of this code from my other side project: [MyChefAI.com](MyChefAI.com), which is an AI recipe writer. 
 
 There are two main pieces to this repo, a frontend and a backend. The frontend uses NextJS, the backend uses API API Gateway and Lambda deployed by AWS SAM. The Lambda utilizes the OpenAI API. 
 
