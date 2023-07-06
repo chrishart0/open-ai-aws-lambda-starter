@@ -8,6 +8,10 @@ NOTE: This repo is a work in progress. Right now it has only been tested running
 ## Overview of the demo application
 The application is an AI Travel agent who will attempt to write a trip itinerary for you. Once the LLM has gotten enough info, it will attempt to write the itinerary in markdown. The UI will render this markdown in the chat window into a nice looking format.
 
+Here is how it looks:
+![Demo image 1](docs/demo-image-1.png)
+![Demo image 2](docs/demo-image-2.png)
+
 # Backend - API
 ## Setup Steps
 
