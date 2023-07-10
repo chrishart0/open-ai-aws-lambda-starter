@@ -81,5 +81,19 @@ The initial prompt is maintained here in the ChatBot component of the frontend: 
 
 There is no need to reload or rebuild. Simple make your alteration to the prompt, save the file, and you should see the localhost:3000 page will have refreshed, ready for you to start a new chat.
 
+# Handling In-Context data (WIP)
+Let's give the model access to data
+
+Quote from OpenAI:
+
+> Why search is better than fine-tuning  
+GPT can learn knowledge in two ways:  
+> 1) Via model weights (i.e., fine-tune the model on a training set)  
+> 2) Via model inputs (i.e., insert the knowledge into an input message) <br><br>
+Although fine-tuning can feel like the more natural option—training on data is how GPT learned all of its other knowledge, after all—we generally do not recommend it as a way to teach the model knowledge. Fine-tuning is better suited to teaching specialized tasks or styles, and is less reliable for factual recall.  
+
+Source: https://github.com/openai/openai-cookbook/blob/main/examples/Question_answering_using_embeddings.ipynb
+
+
 ## Need some help or have an idea for an improvement?
 Please feel free to ask questions or make PRs.
