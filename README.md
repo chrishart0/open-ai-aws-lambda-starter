@@ -18,6 +18,16 @@ Here is how it looks:
 ![Demo image 1](docs/demo-image-1.png)
 ![Demo image 2](docs/demo-image-2.png)
 
+
+# Start with Docker-Compose
+The easiest way to spin up this application is with docker compose. Just run the below command and docker will take care of the rest. Just make sure you have docker and docker-compose installed.
+
+```
+docker-compose up
+```
+
+# Running the Application without docker-compose
+
 # Backend - API
 ## Setup Steps
 
@@ -35,7 +45,12 @@ aws secretsmanager create-secret --name /serverlessGenAiExample/openaiApiKey \
   --secret-string 'sk-********' 
 ```
 
-## Test locally
+
+### Statup the Backend
+There are two ways to run the backend. The first is via a lambda function, the second is via FastAPI. Choose one of these methods to run the API. Both will startup and API on port 4000.
+
+
+### AWS Lambda via SAM 
 Invoke AWS SAM API locally with an example event
 
 ```
@@ -51,7 +66,9 @@ Startup te API with SAM to mock API Gateway and lambda locally
 sam build && sam local start-api --port 4000
 ```
 
-# FastAPI - Backend
+### FastAPI - Backend
+
+Install prereqs
 
 ```
 python3 -m venv .venv
@@ -59,6 +76,26 @@ source .venv/bin/activate
 pip install -r backend/chat_api/requirements.txt
 ```
 
+Startup API
+
+```
+python backend/chat_api/fast_api.py 
+```
+
+Or, use docker to run the backend api
+```
+docker build -t chat_fastapi chat_api/
+
+# We use the mount command so the container can pickup code changes automaticlly without a rebuild
+docker run -t -p 4000:4000 -v $(pwd):/app chat_fastapi
+
+docker run -t -p 4000:4000 \
+  -v $(pwd)/chat_api:/app \
+  -v ~/.aws:/root/.aws \
+  -e OPEN_AI_API_KEY_SECRET_NAME='/serverlessGenAiExample/openaiApiKey' \
+  chat_fastapi
+
+```
 # Frontend - UI
 The frontend uses NextJS. 
 

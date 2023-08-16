@@ -1,0 +1,23 @@
+version: '3.7'
+
+services:
+  fastapi_app:
+    image: backend_chat_fastapi
+    build:
+      context: ./backend/chat_api
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./backend/chat_api:/app 
+      - ~/.aws:/root/.aws  # Map AWS credentials.
+    environment:
+      - OPEN_AI_API_KEY_SECRET_NAME=/serverlessGenAiExample/openaiApiKey  # You can omit this if you're relying solely on mounted credentials.
+
+  nextjs_app:  # Name of your Next.js service
+    image: frontend_nextjs
+    build:
+      context: ./frontend  # Replace with your actual Next.js directory path relative to this docker-compose file
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./frontend:/usr/src/app  # Replace with your actual Next.js directory path relative to this docker-compose file

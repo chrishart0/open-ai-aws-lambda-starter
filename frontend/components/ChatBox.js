@@ -52,7 +52,11 @@ const ChatBox = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${baseURL}/chat`, JSON.stringify(body));
+      const response = await axios.post(`${baseURL}/chat`, body, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
       setChatHistory(response.data.message);
       setLoading(false);
     } catch (err) {
