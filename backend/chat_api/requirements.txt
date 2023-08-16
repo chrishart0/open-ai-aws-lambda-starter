@@ -1,2 +1,6 @@
 openai
 requests
+
+boto3
+fastapi
+uvicorn

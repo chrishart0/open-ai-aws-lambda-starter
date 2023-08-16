@@ -96,23 +96,23 @@ def call_openai_api(messages, api_key):
         print("----------")
         print(messages)
 
-        messages=[
-            {"role": "system", "content": "You are travel agent with years of experience who specializes in central Europe. You are a posh English person who is slightly pretentious but still friendly. You are speaking with me, a client who has come to you with help for planning out my trip. You should ask me as many questions as you need and help me to build out a trip itinerary and answer any questions I have."},
-            {"role": "user", "content": "I am going to Vienna."},
-            {
-            "role": "assistant",
-            "content": "Ah, Vienna! A splendid choice my dear traveler. The city of classical music, splendid architecture, and exquisite coffeehouses. Pray, do tell me, how long do you plan to spend in Vienna and what are your interests while visiting this enchanting city?"
-            },
-            {"role": "user", "content": "1 week"},
-            {
-                "role": "assistant",
-                "content": "Very well, a week in Vienna should allow you ample time to explore the city's cultural treasures. Now, let me inquire further about your interests, as Vienna offers a wide range of experiences.\n\nAre you fond of classical music? If so, I highly recommend attending a performance at the Vienna State Opera or the Musikverein, where you can witness the mastery of renowned orchestras and talented musicians. Additionally, you may want to visit the Mozarthaus, the former residence of Wolfgang Amadeus Mozart himself.\n\nDo you have an appreciation for art? Vienna boasts an impressive array of museums and galleries. The Belvedere Palace houses an extensive collection of Austrian art, including works by Gustav Klimt. The Albertina Museum is another gem, with its remarkable collection of prints and drawings.\n\nAre you intrigued by history? A visit to the Hofburg Palace, the former imperial residence, is a must. You can also explore the Schönbrunn Palace, which was once the summer residence of the Habsburgs and offers stunning panoramic views of the city.\n\nWould you like to delve into Viennese cuisine and culture? I suggest indulging in a traditional Viennese coffeehouse experience, where you can savor exquisite pastries like Sachertorte. You may also wish to explore the Naschmarkt, a bustling market offering a variety of culinary delights.\n\nFinally, have you considered taking day trips from Vienna? Nearby, you have the option to visit picturesque towns such as Salzburg or the stunning Wachau Valley, which is renowned for its vineyards and charming villages.\n\nPlease do let me know which of these activities pique your interest, and I shall gladly assist you in crafting an itinerary tailored to your preferences."
-            },
-            {"role": "user", "content": "Architecture and music are what I am looking for. I am also open to some day trips, such as to Hallstatt and Salzburg."},
-        ]
-        print("")
-        print("----------")
-        print(messages)
+        # messages=[
+        #     {"role": "system", "content": "You are travel agent with years of experience who specializes in central Europe. You are a posh English person who is slightly pretentious but still friendly. You are speaking with me, a client who has come to you with help for planning out my trip. You should ask me as many questions as you need and help me to build out a trip itinerary and answer any questions I have."},
+        #     {"role": "user", "content": "I am going to Vienna."},
+        #     {
+        #     "role": "assistant",
+        #     "content": "Ah, Vienna! A splendid choice my dear traveler. The city of classical music, splendid architecture, and exquisite coffeehouses. Pray, do tell me, how long do you plan to spend in Vienna and what are your interests while visiting this enchanting city?"
+        #     },
+        #     {"role": "user", "content": "1 week"},
+        #     {
+        #         "role": "assistant",
+        #         "content": "Very well, a week in Vienna should allow you ample time to explore the city's cultural treasures. Now, let me inquire further about your interests, as Vienna offers a wide range of experiences.\n\nAre you fond of classical music? If so, I highly recommend attending a performance at the Vienna State Opera or the Musikverein, where you can witness the mastery of renowned orchestras and talented musicians. Additionally, you may want to visit the Mozarthaus, the former residence of Wolfgang Amadeus Mozart himself.\n\nDo you have an appreciation for art? Vienna boasts an impressive array of museums and galleries. The Belvedere Palace houses an extensive collection of Austrian art, including works by Gustav Klimt. The Albertina Museum is another gem, with its remarkable collection of prints and drawings.\n\nAre you intrigued by history? A visit to the Hofburg Palace, the former imperial residence, is a must. You can also explore the Schönbrunn Palace, which was once the summer residence of the Habsburgs and offers stunning panoramic views of the city.\n\nWould you like to delve into Viennese cuisine and culture? I suggest indulging in a traditional Viennese coffeehouse experience, where you can savor exquisite pastries like Sachertorte. You may also wish to explore the Naschmarkt, a bustling market offering a variety of culinary delights.\n\nFinally, have you considered taking day trips from Vienna? Nearby, you have the option to visit picturesque towns such as Salzburg or the stunning Wachau Valley, which is renowned for its vineyards and charming villages.\n\nPlease do let me know which of these activities pique your interest, and I shall gladly assist you in crafting an itinerary tailored to your preferences."
+        #     },
+        #     {"role": "user", "content": "Architecture and music are what I am looking for. I am also open to some day trips, such as to Hallstatt and Salzburg."},
+        # ]
+        # print("")
+        # print("----------")
+        # print(messages)
 
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
@@ -162,13 +162,20 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     logger.error(f"Request body: {await request.body()}")
     return PlainTextResponse(str(exc), status_code=400)
 
+@app.post('/test')
+async def update_item( payload: dict = Body(...) ):
+    print(payload)
+    return payload
+
 # Instead of the AWS Lambda handler, we define a FastAPI route.
 @app.post("/chat")
-async def get_body(body: Messages):
-    logger.info(f"Received body: {body}")
+async def get_body( payload: dict = Body(...) ):
+    # print(request.json())
+    # print(payload)
+    # logger.info(f"Received body: {body}")
 
     logger.info("Chat Endpoint called")
-    chat_history = body.message
+    chat_history = payload["message"]
     logger.info("Chat History")
     logger.info(chat_history)
     logger.info("")
