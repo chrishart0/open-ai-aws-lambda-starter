@@ -51,6 +51,14 @@ Startup te API with SAM to mock API Gateway and lambda locally
 sam build && sam local start-api --port 4000
 ```
 
+# FastAPI - Backend
+
+```
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r backend/chat_api/requirements.txt
+```
+
 # Frontend - UI
 The frontend uses NextJS. 
 
