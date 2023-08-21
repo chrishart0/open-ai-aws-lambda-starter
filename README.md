@@ -20,7 +20,7 @@ Here is how it looks:
 
 
 # Start with Docker-Compose
-The easiest way to spin up this application is with docker compose. Just run the below command and docker will take care of the rest. Just make sure you have docker and docker-compose installed.
+The easiest way to spin up this application is with docker compose. Just run the below command and docker will take care of the rest. Just make sure you have docker and docker-compose installed and running.
 
 ```
 docker-compose up

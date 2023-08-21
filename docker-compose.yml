@@ -18,6 +18,6 @@ services:
     build:
       context: ./frontend  # Replace with your actual Next.js directory path relative to this docker-compose file
     ports:
-      - "3001:3000"
-    volumes:
-      - ./frontend:/usr/src/app  # Replace with your actual Next.js directory path relative to this docker-compose file
+      - "3000:3000"
+    # volumes:
+    #   - ./frontend:/usr/src/app  # Replace with your actual Next.js directory path relative to this docker-compose file

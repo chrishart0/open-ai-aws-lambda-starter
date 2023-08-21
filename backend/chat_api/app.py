@@ -43,11 +43,11 @@ def get_logger():
 
 logger.info("Initializing the things which need that to be prepared")
 
-secretsmanager = boto3.client('secretsmanager')
-openai_api_key_secret = '/serverlessGenAiExample/openaiApiKey'
 
 # Function to retrieve secret value (OpenAI API key) from AWS Secrets Manager
 def get_secret_value(secret_name):
+    secretsmanager = boto3.client('secretsmanager')
+    openai_api_key_secret = '/serverlessGenAiExample/openaiApiKey'
     try:
         # Fetch parameter details from AWS Secrets Manager
         secret_response = secretsmanager.get_secret_value(SecretId=secret_name) 
@@ -62,7 +62,11 @@ def get_secret_value(secret_name):
         raise e
     
 def get_openai_api_key():
-    return get_secret_value(openai_api_key_secret)
+    # return get_secret_value(openai_api_key_secret)
+    # Get local key
+    with open('openai_api_key.txt', 'r') as file:
+        api_key = file.read().strip()
+    return api_key
     
 
 def call_openai_api(messages, api_key):

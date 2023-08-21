@@ -1,2 +1,4 @@
 .venv
 .aws-sam
+.DS_Store
+backend/chat_api/openai_api_key.txt
