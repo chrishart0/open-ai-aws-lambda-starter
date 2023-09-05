@@ -1,15 +1,20 @@
 # AWS Serverless Generative AI Quick Start Guide
-In this guide we will provide a relatively simple example of how to host a generative AI application on AWS using the OpenAI API. I pulled most of this code from my other side project: [MyChefAI.com](MyChefAI.com), which is an AI recipe writer. 
+In this guide we will provide a relatively simple example of how to host a generative AI application on AWS using the OpenAI API. I pulled most of this UI code from my other side project: [MyChefAI.com](MyChefAI.com), which is an AI recipe writer. 
 
-There are two main pieces to this repo, a frontend and a backend. The frontend uses NextJS, the backend uses API API Gateway and Lambda deployed by AWS SAM. The Lambda utilizes the OpenAI API. 
+There are two main pieces to this repo, a frontend and a backend. The frontend uses NextJS, the backend uses FastAPI and Langchain. The Lambda utilizes the OpenAI API. 
 
-NOTE: This repo is a work in progress. Right now it has only been tested running on the local machine, this hasn't been tested deployed yet. 
+NOTE: This repo is a work in progress. Right now it is only designed to be run locally, there is no IaC to deploy this anywhere.
 
-Features:
-* OpenAI API key stored in AWS Secrets Manager
-* Chat History maintained in UI
+**Features:**
+* OpenAI API key stored locally
+* Chat History for the current conversation maintained in UI
 * UI will render markdown for better looking user interface
 * Chat Prompt instructed to return travel itinerary in markdown
+
+**ToDo:**
+* Store chate history in a DB to be retrived later
+* Allow user to create new prompts and store these in a DB
+* Allow user to upload a file, generate embeddings, and chat with it (RAG)
 
 ## Overview of the demo application
 The application is an AI Travel agent who will attempt to write a trip itinerary for you. Once the LLM has gotten enough info, it will attempt to write the itinerary in markdown. The UI will render this markdown in the chat window into a nice looking format.
@@ -22,41 +27,39 @@ Here is how it looks:
 # Start with Docker-Compose
 The easiest way to spin up this application is with docker compose. Just run the below command and docker will take care of the rest. Just make sure you have docker and docker-compose installed and running.
 
+## 1) Prepare the Key
+First, preparethe OpenAPI key. Create a file in the `backend` directory called `openai_api_key.txt`. This file is added in the .gitignore so it will not be commited if you clone this repo.
+
+## 2) Start the Containers
+Startup the frontend and backend containers. Docker Compose will automaticlly build these container on your system the first time you run this command. 
 ```
 docker-compose up
 ```
 
+The application will now be availbe at <http://localhost:3000>
+You can also access the OpenAPI spec at <http://localhost:4000/docs>
+
 # Running the Application without docker-compose
 
-# Backend - API
-## Setup Steps
+## Backend - Fast API, Langchain, OpenAI
 
-### Prereqs
-1. Ensure you have AWS CLI configured with a profile
-2. Install AWS SAM
-3. Install Docker
-4. Get an OpenAI API key
+### 1) Prepare the OpenAPI key
+First, preparethe OpenAPI key. Create a file in the `backend` directory called `openai_api_key.txt`. This file is added in the .gitignore so it will not be commited if you clone this repo.
 
-### Create Open AI API Key Secret
-Run this bash command modified with your secret
+
+### 2) Statup the API
+There are two ways to run the backend. if you'd like to run FastAPI without docker then follow these steps. 
+
+Install prereqs
 ```
-aws secretsmanager create-secret --name /serverlessGenAiExample/openaiApiKey \
-  --description "API Key for Open AI API" \
-  --secret-string 'sk-********' 
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r backend/requirements.txt
 ```
 
-
-### Statup the Backend
-There are two ways to run the backend. The first is via a lambda function, the second is via FastAPI. Choose one of these methods to run the API. Both will startup and API on port 4000.
-
-
-### AWS Lambda via SAM 
-Invoke AWS SAM API locally with an example event
-
+Run the python script which starts the API, as shown below.
 ```
-cd backend
-
-sam build && sam local invoke ChatFunction --event events/event.json
+python backend/chat_api/fast_api.py 
 ```
 
 Startup te API with SAM to mock API Gateway and lambda locally
@@ -66,37 +69,7 @@ Startup te API with SAM to mock API Gateway and lambda locally
 sam build && sam local start-api --port 4000
 ```
 
-### FastAPI - Backend
-
-Install prereqs
-
-```
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r backend/chat_api/requirements.txt
-```
-
-Startup API
-
-```
-python backend/chat_api/fast_api.py 
-```
-
-Or, use docker to run the backend api
-```
-docker build -t chat_fastapi chat_api/
-
-# We use the mount command so the container can pickup code changes automaticlly without a rebuild
-docker run -t -p 4000:4000 -v $(pwd):/app chat_fastapi
-
-docker run -t -p 4000:4000 \
-  -v $(pwd)/chat_api:/app \
-  -v ~/.aws:/root/.aws \
-  -e OPEN_AI_API_KEY_SECRET_NAME='/serverlessGenAiExample/openaiApiKey' \
-  chat_fastapi
-
-```
-# Frontend - UI
+## Frontend - NextJS
 The frontend uses NextJS. 
 
 *NOTE:* I have not yet written any deployment mechanism for the frontend, for now it only works on the local machine

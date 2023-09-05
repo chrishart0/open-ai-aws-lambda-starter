@@ -1,6 +1,6 @@
 # Use an official lightweight Python image.
 # We chose a slim-buster image to keep the image size small, but you can choose another if needed.
-FROM python:3.9-slim-buster
+FROM python:3.10-slim-buster
 
 # Set the working directory in the container
 WORKDIR /app

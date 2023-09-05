@@ -18,22 +18,19 @@ import ReactMarkdown from 'react-markdown';
 
 const baseURL = "http://localhost:4000";
 
-const ChatBox = () => {
+const ChatBox = (aiDefinition, aiInitialMessage) => {
+
   const initialMessages = [
     {
       role: "system",
-      content:
-        `You are travel agent with years of experience who specializes in central Europe.
-        You are a posh English person who is slightly pretentious but still friendly. 
-        You are speaking with me, a client who has come to you with help for planning out my trip. 
-        You should ask me as many questions as you need and help me to build out a trip itinerary and answer any questions I have.
-        If you are wiring the itinerary, ensure it is written in markdown, write a title for the itinerary and ensure its a markdown # h1`,
+      content: aiDefinition['aiDefinition'], //ToDo: No idea why I need to access the string like this. Why can't I just look into aiInitialMessage, why do I need to go 1 level in?
     },
     {
       role: "assistant",
-      content: "Hello! How can I assist you with planning your trip to central Europe? Let me know where you are going, how long you will be there, the sorts of things you are interested in doing, and anything else which will help me write your itinerary.",
+      content: aiDefinition['aiInitialMessage'],
     },
   ];
+
 
   const [message, setMessage] = useState("");
   const [chatHistory, setChatHistory] = useState(initialMessages);
@@ -54,9 +51,9 @@ const ChatBox = () => {
     try {
       const response = await axios.post(`${baseURL}/chat`, body, {
         headers: {
-            'Content-Type': 'application/json'
+          'Content-Type': 'application/json'
         }
-    });
+      });
       setChatHistory(response.data.message);
       setLoading(false);
     } catch (err) {
@@ -69,6 +66,22 @@ const ChatBox = () => {
   const isMarkdown = (text) => {
     return text.startsWith('# ') || text.startsWith('## ') || text.startsWith('### ');
   }
+
+  const handleSendMessage = () => {
+    if (message.trim() !== "") {
+      sendMessage();
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (message.trim() !== "") {
+        sendMessage();
+      }
+    }
+  };
+
 
   return (
     <Box
@@ -138,8 +151,16 @@ const ChatBox = () => {
           fullWidth
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          inputProps={{
+            onKeyDown: handleKeyDown
+          }}
         />
-        <Button variant="contained" color="primary" onClick={sendMessage} disabled={loading}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => { if (message.trim() !== "") sendMessage(); }}
+          disabled={loading || !message.trim()}
+        >
           Send
         </Button>
       </Box>

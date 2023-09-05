@@ -1,3 +1,5 @@
+import os
+import json
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
@@ -6,7 +8,7 @@ from typing import List
 from pydantic import BaseModel
 
 # Import necessary functions from the app module
-from app import get_openai_api_key, call_openai_api, get_logger
+from app import get_openai_api_key, call_llm, get_logger
 
 # Initialize a logger
 logger = get_logger()
@@ -53,11 +55,13 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 # Define chat endpoint to interact with the OpenAI API
 @app.post("/chat")
-async def get_body(payload: ChatPayload):
+async def post_chat_body(payload: ChatPayload):
 
     # Get OpenAI API key
-    logger.info("Getting OpenAI API key from AWS Secrets Manager")
+    logger.info("Getting OpenAI API key")
     open_ai_api_key = get_openai_api_key()
+
+    logger.info(payload)
 
     # Extract chat history from payload
     chat_history = [message.dict() for message in payload.message]
@@ -65,24 +69,42 @@ async def get_body(payload: ChatPayload):
     logger.info("Chat Endpoint called")
     logger.info("Chat History: %s", chat_history)
 
-    # Call OpenAI API and get response
-    latest_response, tokens_used = call_openai_api(chat_history, open_ai_api_key)
-    chat_history.append(latest_response.to_dict())
+    # Call OpenAI API and get responsexz
+    latest_response = call_llm(chat_history, open_ai_api_key)
+    chat_history.append(latest_response)
 
     # Return the response
     return {
-        "tokens_used": tokens_used,
         "message": chat_history,
     }
 
+@app.get("/prompts")
+async def get_prompts():
 
-# Main execution block: Starts the FastAPI app using Uvicorn
+    # with open('openai_api_key.txt', 'r') as file:
+    #     api_key = file.read().strip()
+
+    prompts_list = os.listdir("prompts")
+
+    # Return the response
+    return {
+        "prompts": prompts_list,
+    }
+
+
+@app.get("/prompts/prompt")
+async def get_prompt(prompt_name):
+
+    with open(f'prompts/{prompt_name}', 'r') as file:
+        prompt = json.load( file)
+
+    return {
+        "prompt": prompt
+    }
+
+# Main execution block: Starts the FastAPI app using Uvicorn running locally
 if __name__ == "__main__":
     import uvicorn
-
-    # Get OpenAI API key
-    # logger.info("Getting OpenAI API key from AWS Secrets Manager")
-    # open_ai_api_key = get_openai_api_key()
-
+    
     # Run the FastAPI app on the specified host and port
     uvicorn.run(app, host="0.0.0.0", port=4000)
